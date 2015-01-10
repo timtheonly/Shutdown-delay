@@ -7,7 +7,7 @@ import sys
 import os
 
 
-class Shutdown_app(Tkinter.Tk):
+class ShutdownApp(Tkinter.Tk):
     def __init__(self, args):
         Tkinter.Tk.__init__(self)
         self.time = args.hour
@@ -15,7 +15,7 @@ class Shutdown_app(Tkinter.Tk):
         self.title("Shutdown")
 
     def initialiase(self):
-        self.geometry("300x100+100+100")
+        self.geometry("450x100+100+100")
         self.container = Tkinter.Frame(self)
         self.container.pack(side="top", fill="both", expand=True)
 
@@ -23,17 +23,23 @@ class Shutdown_app(Tkinter.Tk):
         self.container.grid_rowconfigure(0, weight=1)
 
         self.frames = {}
-        for f in (Notify_Frame, Delay_Frame):
+        for f in (NotifyFrame, DelayFrame, DelayedFrame):
             frame = f(self.container, self)
             frame.grid(row=0, column=0, sticky="nsew")
             self.frames[f] = frame
-        self.show_frame(Notify_Frame)
+        self.show_frame(NotifyFrame)
 
     def show_frame(self, class_name):
         self.frames[class_name].tkraise()
 
 
-class Base_Frame(Tkinter.Frame):
+class ShutdownLabel(Tkinter.Label):
+    def __init__(self, master):
+        Tkinter.Label.__init__(self, master)
+        self.configure(font=("Helvetica", 16), fg="black")
+
+
+class BaseFrame(Tkinter.Frame):
     def __init__(self, master, controller):
         Tkinter.Frame.__init__(self, master)
         self.controller = controller
@@ -43,18 +49,32 @@ class Base_Frame(Tkinter.Frame):
         raise NotImplementedError
 
 
-class Notify_Frame(Base_Frame):
+class NotifyFrame(BaseFrame):
     def populate(self):
-        self.label = Tkinter.Label(self, font=("Helvetica", 16), fg="black", bg="red")
+        self.label = ShutdownLabel(self)
+        self.label.configure(bg="red")
         self.label['text'] = "System will shutdown at {}:00".format(self.controller.time)
         self.label.pack(fill="x")
-        self.delay_button = Tkinter.Button(self, text="DELAY", command=lambda: self.controller.show_frame(Delay_Frame))
+        self.delay_button = Tkinter.Button(self, text="DELAY", command=lambda: self.controller.show_frame(DelayFrame))
         self.delay_button.pack(pady=1, padx=10)
 
 
-class Delay_Frame(Base_Frame):
+class DelayFrame(BaseFrame):
     def populate(self):
-        self.label = Tkinter.Label(self, font=("Helvetica", 16), fg="black", bg="white")
+        self.label = ShutdownLabel(self)
+        self.label.configure(bg="white")
+        self.label['text'] = "Enter the number of hours to delay shutdown:"
+        self.label.pack(fill="x")
+        self.entry = Tkinter.Entry(self)
+        self.entry.pack(fill="x")
+        self.continue_button = Tkinter.Button(self, text="DELAY", command=lambda: self.controller.show_frame(DelayedFrame))
+        self.continue_button.pack(pady=1, padx=10)
+
+
+class DelayedFrame(BaseFrame):
+    def populate(self):
+        self.label = ShutdownLabel(self)
+        self.label.configure(bg="white")
         self.label['text'] = "Shutdown Delayed"
         self.label.pack(fill="x")
 
@@ -72,7 +92,7 @@ if __name__ == '__main__':
     args = build_args()
 
     if args.hour:
-        app = Shutdown_app(args)
+        app = ShutdownApp(args)
         app.mainloop()
     else:
         print "Please specify a time"

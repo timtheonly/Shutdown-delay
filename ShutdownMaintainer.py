@@ -1,35 +1,55 @@
+__author__ = 'Daniel Hogan'
+
 import subprocess
 from datetime import datetime 
 
 
 class ShutdownMaintainer:
+    """
+    Maintains a pre-existing shutdown
+
+    Attributes:
+        logger -- the log handler to be used"""
     def __init__(self, logger):
         self.logger = logger
 
     def cancel_shutdown(self):
-            exitcode = subprocess.call(['shutdown', '-c'])
-            if exitcode == 0:
-                self.logger.log('shutdown canceled')
-                return
-            self.logger.log('failed to cancel shutdown')
-            raise ShutDownException('failed to cancel shutdown')
+        """"
+            Cancels an existing shutdown
+
+            Throws:
+                Shutdown when shutdown cannot be canceled (i.e. no shutdown exists)"""
+        self.exitcode = subprocess.call(['shutdown', '-c'])
+        if self.exitcode == 0:
+            self.logger.log('shutdown canceled')
+            return
+        self.logger.log('failed to cancel shutdown')
+        raise ShutdownException('failed to cancel shutdown')
 
     def set_shutdown(self, delay):
-            d = datetime.now()
-            hr = d.hour
-            hr = hr+1
-            hr = hr+delay
-            hr = hr%24
-            hour_arg = '{0}:00'.format(hr)
-            exitcode = subprocess.call(['shutdown', '-h', hour_arg])
-            if exitcode == 0:
-                self.logger.log('shutdown delayed until {0}:00'.format(hr))
-                return
-            self.logger.log('failed to set shutdown')
-            raise ShutDownException('failed to set shutdown')
+        """"
+            Sets a Shutdown for NOW + delay
+            Args:
+                delay -- The delay to be used for the shutdown
+
+            Throws:
+                Shutdown when shutdown cannot be set (i.e. a shutdown already exits)
+        """
+        d = datetime.now()
+        hr = d.hour
+        hr = hr+1
+        hr = hr+delay
+        hr = hr%24
+        hour_arg = '{0}:00'.format(hr)
+        exitcode = subprocess.call(['shutdown', '-h', hour_arg])
+        if exitcode == 0:
+            self.logger.log('shutdown delayed until {0}:00'.format(hr))
+            return
+        self.logger.log('failed to set shutdown')
+        raise ShutdownException('failed to set shutdown')
 
 
-class ShutDownException(Exception):
+class ShutdownException(Exception):
     """Exception raised for errors in ShutdownMaintainer
 
     Attrinbutes:

@@ -92,6 +92,9 @@ class DelayFrame(BaseFrame):
         self.continue_button = Tkinter.Button(self, text="DELAY", command=lambda: self.dispatch(DelayedFrame))
         self.continue_button.pack(pady=1, padx=10)
 
+    """ Override BaseFrame.dispatch
+        calls Shutdown_maintainer to cancel and then
+        set a shutdown for the requested time"""
     def dispatch(self, frame):
         self.controller.set_delayed_time(int(self.entry.get()) + self.controller.time)
         BaseFrame.dispatch(self, frame)
@@ -112,9 +115,9 @@ def build_args():
     return parser.parse_args()
 
 if __name__ == '__main__':
-    """if not os.geteuid() == 0:
-         sys.exit('Script must be run as root')
-    logger = Logger('shutdown.log')"""
+    if not os.geteuid() == 0:
+        sys.exit('Script must be run as root')
+    logger = Logger('shutdown.log')
     args = build_args()
 
     if args.hour:
@@ -122,4 +125,4 @@ if __name__ == '__main__':
         app.mainloop()
     else:
         print "Please specify a time"
-    # logger.close()
+    logger.close()

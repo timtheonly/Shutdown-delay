@@ -9,7 +9,7 @@ class Logger:
 
     def log(self, message):
         d = datetime.now()
-        self.logFile.write('{0} -- {1}\n'.format(datetime.strftime(d,'%a-%H:%M:%S-%d/%m/%y'), message))
+        self.logFile.write('{0} -- {1}\n'.format(datetime.strftime(d, '%a-%H:%M:%S-%d/%m/%y'), message))
 
     def close(self):
         if not self.logFile.closed:

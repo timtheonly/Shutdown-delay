@@ -2,7 +2,7 @@ import subprocess
 from datetime import datetime 
 
 
-class shutdown_maintainer:
+class ShutdownMaintainer:
     def __init__(self, logger):
         self.logger = logger
 
@@ -26,4 +26,4 @@ class shutdown_maintainer:
                 self.logger.log('shutdown delayed until {0}:00'.format(hr))
                 return 0
             self.logger.log('failed to set shutdown')
-            return 0
+            return 1

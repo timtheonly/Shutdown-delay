@@ -10,20 +10,32 @@ class ShutdownMaintainer:
             exitcode = subprocess.call(['shutdown', '-c'])
             if exitcode == 0:
                 self.logger.log('shutdown canceled')
-                return 0
+                return
             self.logger.log('failed to cancel shutdown')
-            return 1
+            raise ShutDownException('failed to cancel shutdown')
 
     def set_shutdown(self, delay):
             d = datetime.now()
             hr = d.hour
-            hr = hr + 1
+            hr = hr+1
             hr = hr+delay
-            hr = hr % 24
+            hr = hr%24
             hour_arg = '{0}:00'.format(hr)
             exitcode = subprocess.call(['shutdown', '-h', hour_arg])
             if exitcode == 0:
                 self.logger.log('shutdown delayed until {0}:00'.format(hr))
-                return 0
+                return
             self.logger.log('failed to set shutdown')
-            return 1
+            raise ShutDownException('failed to set shutdown')
+
+
+class ShutDownException(Exception):
+    """Exception raised for errors in ShutdownMaintainer
+
+    Attrinbutes:
+        exceptString -- explanation of the error"""
+    def __init__(self, except_string):
+        self.except_string = except_string
+
+    def __str__(self):
+        return repr(self.exceptString)

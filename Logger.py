@@ -23,7 +23,7 @@ class Logger:
 
         """
         self.d = datetime.now()
-        self.logFile.write('{0} -- {1}\n'.format(datetime.strftime(self.d, '%a-%H:%M:%S-%d/%m/%y'), message))
+        self.logFile.write('{0} -- {1}\n'.format(self.d.strftime('%a-%H:%M:%S-%d/%m/%y'), message))
 
     def close(self):
         """

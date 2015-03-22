@@ -1,8 +1,11 @@
 #!/usr/bin/python
 
+from __future__ import print_function
 import Tkinter
 from Logger import Logger
 import argparse
+from ShutdownMaintainer import ShutdownMaintainer
+from ShutdownMaintainer import ShutdownException
 import sys
 import os
 
@@ -97,6 +100,29 @@ class DelayFrame(BaseFrame):
         set a shutdown for the requested time"""
     def dispatch(self, frame):
         self.controller.set_delayed_time(int(self.entry.get()) + self.controller.time)
+        if args.verbose:
+            print("Canceling shutdown.. ")
+        maintainer = ShutdownMaintainer()
+        try:
+            maintainer.cancel_shutdown()
+        except ShutdownException:
+            if args.verbose:
+                print("Error canceling shutdown closing", file=sys.stderr)
+            sys.exit(1)
+
+        if args.verbose:
+            print("Shutdown canceled..")
+            print("setting new shutdown for {0}:00..".format(self.controller.get_delayed_time()))
+
+        try:
+            maintainer.set_shutdown(self.entry.get())
+        except ShutdownException:
+            if args.verbose:
+                print("Error setting new shutdown closing", file=sys.stderr)
+
+        if args.verbose:
+            print("Shutdown Delayed until {0}:00".format(self.controller.get_delayed_time()))
+
         BaseFrame.dispatch(self, frame)
 
 
@@ -110,19 +136,23 @@ class DelayedFrame(BaseFrame):
 
 def build_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-v', '--verbose', help='prints everything')
+    parser.add_argument('-v', '--verbose', help='prints everything', action='store_true')
     parser.add_argument('-H', '--hour', type=int, help='The hour that shutdown is set for')
     return parser.parse_args()
 
 if __name__ == '__main__':
-    if not os.geteuid() == 0:
-        sys.exit('Script must be run as root')
+    # if not os.geteuid() == 0:
+    #    sys.exit('Script must be run as root')
     logger = Logger('shutdown.log')
     args = build_args()
+    if args.verbose:
+        logger.log('-- script started')
 
     if args.hour:
         app = ShutdownApp(args)
         app.mainloop()
     else:
-        print "Please specify a time"
+        print("Please specify a time")
+    if args.verbose:
+        logger.log('-- script finished\n')
     logger.close()

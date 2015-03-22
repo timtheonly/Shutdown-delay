@@ -19,8 +19,8 @@ class ShutdownMaintainer:
 
             Throws:
                 Shutdown when shutdown cannot be canceled (i.e. no shutdown exists)"""
-        self.exitcode = subprocess.call(['shutdown', '-c'])
-        if self.exitcode == 0:
+        exitcode = subprocess.call(['shutdown', '-c'])
+        if exitcode == 0:
             self.logger.log('shutdown canceled')
             return
         self.logger.log('failed to cancel shutdown')
@@ -52,10 +52,10 @@ class ShutdownMaintainer:
 class ShutdownException(Exception):
     """Exception raised for errors in ShutdownMaintainer
 
-    Attrinbutes:
+    Attributes:
         exceptString -- explanation of the error"""
     def __init__(self, except_string):
         self.except_string = except_string
 
     def __str__(self):
-        return repr(self.exceptString)
+        return repr(self.except_string)

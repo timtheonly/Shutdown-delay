@@ -21,10 +21,10 @@ class ShutdownMaintainer:
                 Shutdown when shutdown cannot be canceled (i.e. no shutdown exists)"""
         exitcode = subprocess.call(['shutdown', '-c'])
         if exitcode == 0:
-            self.logger.log('shutdown canceled')
+            self.logger.log('Shutdown canceled')
             return
-        self.logger.log('failed to cancel shutdown')
-        raise ShutdownException('failed to cancel shutdown')
+        self.logger.log('Failed to cancel shutdown')
+        raise ShutdownException('Failed to cancel shutdown')
 
     def set_shutdown(self, delay):
         """"
@@ -41,12 +41,13 @@ class ShutdownMaintainer:
         hr = hr+delay
         hr = hr%24
         hour_arg = '{0}:00'.format(hr)
+        self.logger.log('Setting shutdown for {0}:00'.format(hr))
         exitcode = subprocess.call(['shutdown', '-h', hour_arg])
         if exitcode == 0:
-            self.logger.log('shutdown delayed until {0}:00'.format(hr))
+            self.logger.log('Shutdown delayed until {0}:00'.format(hr))
             return
-        self.logger.log('failed to set shutdown')
-        raise ShutdownException('failed to set shutdown')
+        self.logger.log('Failed to set shutdown')
+        raise ShutdownException('Failed to set shutdown')
 
 
 class ShutdownException(Exception):
@@ -59,3 +60,4 @@ class ShutdownException(Exception):
 
     def __str__(self):
         return repr(self.except_string)
+

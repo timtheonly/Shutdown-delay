@@ -11,11 +11,12 @@ import os
 
 
 class ShutdownApp(Tkinter.Tk):
-    def __init__(self, args):
+    def __init__(self, args,logger):
         Tkinter.Tk.__init__(self)
         self._contentUpdated = True
         self.time = args.hour
         self._delayedTime = args.hour
+	self.logger = logger
         self.initialiase()
         self.title("Shutdown")
 
@@ -102,7 +103,7 @@ class DelayFrame(BaseFrame):
         self.controller.set_delayed_time(int(self.entry.get()) + self.controller.time)
         if args.verbose:
             print("Canceling shutdown.. ")
-        maintainer = ShutdownMaintainer()
+        maintainer = ShutdownMaintainer(self.controller.logger)
         try:
             maintainer.cancel_shutdown()
         except ShutdownException:
@@ -115,7 +116,7 @@ class DelayFrame(BaseFrame):
             print("setting new shutdown for {0}:00..".format(self.controller.get_delayed_time()))
 
         try:
-            maintainer.set_shutdown(self.entry.get())
+            maintainer.set_shutdown(int(self.entry.get()))
         except ShutdownException:
             if args.verbose:
                 print("Error setting new shutdown closing", file=sys.stderr)
@@ -149,7 +150,7 @@ if __name__ == '__main__':
         logger.log('-- script started')
 
     if args.hour:
-        app = ShutdownApp(args)
+        app = ShutdownApp(args, logger)
         app.mainloop()
     else:
         print("Please specify a time")

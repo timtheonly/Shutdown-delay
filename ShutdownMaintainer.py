@@ -42,13 +42,20 @@ class ShutdownMaintainer:
         hr = hr%24
         hour_arg = '{0}:00'.format(hr)
         self.logger.log('Setting shutdown for {0}:00'.format(hr))
-        exitcode = subprocess.call(['shutdown', '-h', hour_arg])
+        exitcode = self.shutdown(hour_arg) 
         if exitcode == 0:
             self.logger.log('Shutdown delayed until {0}:00'.format(hr))
             return
         self.logger.log('Failed to set shutdown')
         raise ShutdownException('Failed to set shutdown')
-
+    
+    def shutdown(self,hour):
+	try:
+	    import thread
+	    thread.start_new_thread(subprocess.call,(['shutdown','-h',hour], ))
+            return 0
+        except:
+	    return 1
 
 class ShutdownException(Exception):
     """Exception raised for errors in ShutdownMaintainer

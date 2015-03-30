@@ -147,7 +147,7 @@ if __name__ == '__main__':
         sys.exit('Script must be run as root')
     args = build_args()
     
-    logger = Logger('{0}shutdown.log'.format(path))
+    logger = Logger('{0}shutdown.log'.format(args.log))
 
     if args.verbose:
         logger.log('Script started')
@@ -157,6 +157,7 @@ if __name__ == '__main__':
         app.mainloop()
     else:
         print("Please specify a time")
+
     if args.verbose:
         logger.log('Script finished\n')
     logger.close()

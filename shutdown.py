@@ -138,7 +138,7 @@ class DelayedFrame(BaseFrame):
 def build_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', help='prints everything', action='store_true')
-    parser.add_argument('-H', '--hour', type=int, help='The hour that shutdown is set for')
+    parser.add_argument('-h','--hour', type=int, help='The hour that shutdown is set for')
     parser.add_argument('-l','--log',default='',help='The path where the log file will be created')
     return parser.parse_args()
 
@@ -147,7 +147,7 @@ if __name__ == '__main__':
         sys.exit('Script must be run as root')
     args = build_args()
     
-    logger = Logger('{0}shutdown.log'.format(args.log))
+    logger = Logger('{0}PROCESS_shutdown.log'.format(args.log))
 
     if args.verbose:
         logger.log('Script started')

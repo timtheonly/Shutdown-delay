@@ -152,11 +152,8 @@ if __name__ == '__main__':
     if args.verbose:
         logger.log('Script started')
 
-    if args.hour:
-        app = ShutdownApp(args, logger)
-        app.mainloop()
-    else:
-        print("Please specify a time")
+    app = ShutdownApp(args, logger)
+    app.mainloop()
 
     if args.verbose:
         logger.log('Script finished\n')

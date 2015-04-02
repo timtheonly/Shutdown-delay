@@ -28,7 +28,7 @@ class ShutdownMaintainer:
 
     def set_shutdown(self, delay):
         """"
-            Sets a Shutdown for NOW + delay
+            Creates a shutdown with the specified delay
             Args:
                 delay -- The delay to be used for the shutdown
 
@@ -48,7 +48,12 @@ class ShutdownMaintainer:
             return
         self.logger.log('Failed to set shutdown')
         raise ShutdownException('Failed to set shutdown')
-    
+
+    """
+        Creates a shutdown for the specified hour
+        Args:
+            hour -- The hour to set the shutdown
+    """
     def shutdown(self,hour):
 	try:
 	    import thread

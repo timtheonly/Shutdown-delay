@@ -56,10 +56,10 @@ class ShutdownMaintainer:
     """
     def shutdown(self,hour):
 	try:
-	    import thread
-	    thread.start_new_thread(subprocess.call,(['shutdown','-h',hour], ))
+	    subprocess.Popen(['shutdown','-h',str(hour)])
             return 0
-        except:
+        except Exception as e:
+            print e
 	    return 1
 
 class ShutdownException(Exception):

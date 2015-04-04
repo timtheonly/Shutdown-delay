@@ -8,12 +8,13 @@ class Logger:
         Maintains a log file
 
         Attributes
-            logFile -- the file to use
+            app_name -- the name of the app we're logging for
             d -- the current datetime
     """
-    def __init__(self, filename):
-        self.logFile = open(filename, 'a')
+    def __init__(self, app_name):
         self.d = datetime.now()
+        file_name = "{0}_{1}.log".format(app_name,self.d.strftime('%d%m%y'))
+        self.logFile = open(file_name, 'a')
 
     def log(self, message):
         """

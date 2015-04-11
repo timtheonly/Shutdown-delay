@@ -147,7 +147,7 @@ if __name__ == '__main__':
     if not os.geteuid() == 0:
         sys.exit('Script must be run as root')
     
-    logger = Logger('{0}shutdown'.format(args.log))
+    logger = Logger("shutdown",args.log)
 
     if args.verbose:
         logger.log('Script started')
